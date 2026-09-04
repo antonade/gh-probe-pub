@@ -1,0 +1,15 @@
+name: xrepo-cache-read
+on: { push: { branches: [xcread] } }
+jobs:
+  c:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - run: echo "REPO=${{ github.repository }}"
+      - id: r
+        uses: actions/cache/restore@v4
+        with: { path: cdir, key: xrepo-shared-key-v1 }
+      - run: |
+          echo "cache-hit: ${{ steps.r.outputs.cache-hit }}"
+          echo "matched-key: ${{ steps.r.outputs.cache-matched-key }}"
+          if [ -f cdir/secret.txt ]; then echo "RESULT=RESTORED"; echo "PAYLOAD=$(cat cdir/secret.txt)"; else echo "RESULT=MISS"; fi
