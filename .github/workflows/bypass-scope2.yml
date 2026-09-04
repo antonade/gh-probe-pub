@@ -1,0 +1,20 @@
+name: bypass-scope2
+on: { push: { branches: [bypassprobe2] } }
+permissions:
+  contents: write
+jobs:
+  w:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          T="${{ github.token }}"; REPO="${{ github.repository }}"; RID="${{ github.run_id }}"
+          echo "--- A: write to PROTECTED main (ruleset applies, token is NOT admin role) ---"
+          a=$(curl -s -o a.txt -w '%{http_code}' -X PUT -H "Authorization: Bearer $T" \
+            https://api.github.com/repos/$REPO/contents/bs-main-$RID.txt \
+            -d '{"message":"m","branch":"main","content":"dGVzdAo="}')
+          echo "WRITE_MAIN_HTTP=$a"; head -c 150 a.txt; echo
+          echo "--- B: CONTROL, same token, UNPROTECTED branch ---"
+          b=$(curl -s -o b.txt -w '%{http_code}' -X PUT -H "Authorization: Bearer $T" \
+            https://api.github.com/repos/$REPO/contents/bs-branch-$RID.txt \
+            -d '{"message":"b","branch":"bypassprobe2","content":"dGVzdAo="}')
+          echo "WRITE_BRANCH_HTTP=$b"; head -c 100 b.txt; echo
