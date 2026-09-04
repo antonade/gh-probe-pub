@@ -1,0 +1,9 @@
+name: cn3
+on:
+  push:
+    branches: [cn3]
+jobs:
+  call:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/reuse-writer3.yml
