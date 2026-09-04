@@ -1,0 +1,16 @@
+name: bypass-scope
+on: { push: { branches: [bypassprobe] } }
+permissions:
+  contents: write
+jobs:
+  w:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "ACTOR=${{ github.actor }}"
+          code=$(curl -s -o out.txt -w '%{http_code}' -X PUT \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            https://api.github.com/repos/${{ github.repository }}/contents/bypass-test-${{ github.run_id }}.txt \
+            -d '{"message":"actions token direct push to main","branch":"main","content":"dGVzdAo="}')
+          echo "ACTIONS_WRITE_TO_MAIN_HTTP=$code"
+          head -c 200 out.txt; echo
