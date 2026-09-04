@@ -1,9 +1,0 @@
-name: branch-gate
-on: { push: { branches: [main, notmain] } }
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    environment: branchgated
-    permissions: {}
-    steps:
-      - run: echo "DEPLOY_RAN on ref=${{ github.ref }}"
