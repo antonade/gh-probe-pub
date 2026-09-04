@@ -1,0 +1,9 @@
+name: bisectA
+on:
+  push:
+    branches: [bisa]
+jobs:
+  call:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/min-reusable.yml
