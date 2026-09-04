@@ -1,0 +1,7 @@
+name: min-caller
+on:
+  push:
+    branches: [minreuse]
+jobs:
+  call:
+    uses: ./.github/workflows/min-reusable.yml
