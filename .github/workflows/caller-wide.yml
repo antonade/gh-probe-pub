@@ -1,0 +1,8 @@
+name: caller-wide
+on: { push: { branches: [reusewide] } }
+jobs:
+  call:
+    permissions:
+      contents: read
+      issues: write
+    uses: ./.github/workflows/reusable-writer.yml
