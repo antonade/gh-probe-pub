@@ -1,7 +1,0 @@
-name: caller-narrow
-on: { push: { branches: [reusenarrow] } }
-jobs:
-  call:
-    permissions:
-      contents: read
-    uses: ./.github/workflows/reusable-writer.yml
