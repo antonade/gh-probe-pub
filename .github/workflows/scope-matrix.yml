@@ -1,0 +1,80 @@
+name: scope-matrix
+on:
+  workflow_dispatch:
+
+jobs:
+  p-none:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 probe.py
+        env:
+          PROBE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROBE_LABEL: none
+      - uses: actions/upload-artifact@v4
+        with: { name: probe-none, path: probe-*.jsonl }
+
+  p-metadata:
+    runs-on: ubuntu-latest
+    permissions:
+      metadata: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 probe.py
+        env:
+          PROBE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROBE_LABEL: metadata
+      - uses: actions/upload-artifact@v4
+        with: { name: probe-metadata, path: probe-*.jsonl }
+
+  p-contents-read:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 probe.py
+        env:
+          PROBE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROBE_LABEL: contents-read
+      - uses: actions/upload-artifact@v4
+        with: { name: probe-contents-read, path: probe-*.jsonl }
+
+  p-issues-read:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 probe.py
+        env:
+          PROBE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROBE_LABEL: issues-read
+      - uses: actions/upload-artifact@v4
+        with: { name: probe-issues-read, path: probe-*.jsonl }
+
+  p-issues-write:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 probe.py
+        env:
+          PROBE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROBE_LABEL: issues-write
+      - uses: actions/upload-artifact@v4
+        with: { name: probe-issues-write, path: probe-*.jsonl }
+
+  p-write-all:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 probe.py
+        env:
+          PROBE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROBE_LABEL: write-all
+      - uses: actions/upload-artifact@v4
+        with: { name: probe-write-all, path: probe-*.jsonl }
