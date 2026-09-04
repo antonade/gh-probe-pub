@@ -1,0 +1,9 @@
+name: t1
+on:
+  push:
+jobs:
+  a:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - run: echo t1
