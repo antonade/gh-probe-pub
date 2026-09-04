@@ -1,9 +1,0 @@
-name: caller-narrow2
-on:
-  push:
-    branches: [rn2]
-jobs:
-  call:
-    permissions:
-      contents: read
-    uses: ./.github/workflows/reuse-writer2.yml
