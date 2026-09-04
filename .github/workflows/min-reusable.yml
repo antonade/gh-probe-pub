@@ -1,8 +1,0 @@
-name: min-reusable
-on:
-  workflow_call:
-jobs:
-  w:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo MIN_REUSABLE_RAN
