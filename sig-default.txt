@@ -1,1 +1,0 @@
-sigprobe default-author
