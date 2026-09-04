@@ -1,7 +1,0 @@
-name: bisectB
-on:
-  push:
-    branches: [bisb]
-jobs:
-  call:
-    uses: ./.github/workflows/min-reusable-perm.yml
