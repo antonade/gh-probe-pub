@@ -1,0 +1,10 @@
+name: caller-wide2
+on:
+  push:
+    branches: [rw2]
+jobs:
+  call:
+    permissions:
+      contents: read
+      issues: write
+    uses: ./.github/workflows/reuse-writer2.yml
