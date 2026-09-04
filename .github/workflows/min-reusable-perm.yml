@@ -1,0 +1,11 @@
+name: min-reusable-perm
+on:
+  workflow_call:
+permissions:
+  contents: write
+  issues: write
+jobs:
+  w:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo PERM_REUSABLE_RAN
