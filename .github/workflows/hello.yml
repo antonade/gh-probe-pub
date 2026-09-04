@@ -1,9 +1,0 @@
-name: hello
-on:
-  push:
-  workflow_dispatch:
-jobs:
-  h:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo hi && python3 -c "print(1+1)"
