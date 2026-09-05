@@ -1,0 +1,12 @@
+name: rw-wide
+on:
+  push:
+    branches: [rww]
+jobs:
+  call:
+    permissions:
+      contents: read
+      issues: write
+    uses: ./.github/workflows/rw-callee.yml
+    with:
+      tag: wide
