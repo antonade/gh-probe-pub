@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+x:
+k0:
+  k1:
+    k2:
+      k3:
+        k4:
+          leaf: 1
