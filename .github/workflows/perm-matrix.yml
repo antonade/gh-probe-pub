@@ -1,131 +1,66 @@
 name: perm-matrix
 on: workflow_dispatch
+env:
+  DEP: https://api.github.com/repos/antonade/gh-probe-pub/actions/runners/deprecations/2.337.0
+  ALERTS: https://api.github.com/repos/antonade/gh-probe-pub/dependabot/alerts?per_page=1
+  META: https://api.github.com/repos/antonade/gh-probe-pub
+  APERM: https://api.github.com/repos/antonade/gh-probe-pub/actions/permissions
 jobs:
-  none:
+  p-none:
     runs-on: ubuntu-latest
     permissions: {}
     steps:
-      - name: probe
+      - run: |
+          for u in "$DEP" "$ALERTS" "$META" "$APERM"; do
+            c=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$u")
+            echo "RESULT none $(echo $u | sed 's|.*gh-probe-pub||') $c"
+          done
         env:
           GH: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          p () { printf '%-14s %-34s -> ' "none" "$1"; curl -s -o /tmp/o -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$2"; printf '  %s
-' "$(head -c 60 /tmp/o | tr -d '
-')"; }
-          p "runner-deprecations"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/runners/deprecations/2.337.0"
-          p "dependabot-alerts"     "https://api.github.com/repos/antonade/gh-probe-pub/dependabot/alerts?per_page=1"
-          p "star-history"          "https://api.github.com/repos/antonade/gh-probe-pub/star-history"
-          p "repo-metadata"         "https://api.github.com/repos/antonade/gh-probe-pub"
-          p "actions-permissions"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/permissions" 
-  contents:
+  p-contents:
     runs-on: ubuntu-latest
-    permissions: {contents: read}
+    permissions:
+      contents: read
     steps:
-      - name: probe
+      - run: |
+          for u in "$DEP" "$ALERTS" "$META" "$APERM"; do
+            c=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$u")
+            echo "RESULT contents $(echo $u | sed 's|.*gh-probe-pub||') $c"
+          done
         env:
           GH: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          p () { printf '%-14s %-34s -> ' "contents" "$1"; curl -s -o /tmp/o -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$2"; printf '  %s
-' "$(head -c 60 /tmp/o | tr -d '
-')"; }
-          p "runner-deprecations"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/runners/deprecations/2.337.0"
-          p "dependabot-alerts"     "https://api.github.com/repos/antonade/gh-probe-pub/dependabot/alerts?per_page=1"
-          p "star-history"          "https://api.github.com/repos/antonade/gh-probe-pub/star-history"
-          p "repo-metadata"         "https://api.github.com/repos/antonade/gh-probe-pub"
-          p "actions-permissions"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/permissions" 
-  actions:
+  p-actions:
     runs-on: ubuntu-latest
-    permissions: {actions: read}
+    permissions:
+      actions: read
     steps:
-      - name: probe
+      - run: |
+          for u in "$DEP" "$ALERTS" "$META" "$APERM"; do
+            c=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$u")
+            echo "RESULT actions $(echo $u | sed 's|.*gh-probe-pub||') $c"
+          done
         env:
           GH: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          p () { printf '%-14s %-34s -> ' "actions" "$1"; curl -s -o /tmp/o -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$2"; printf '  %s
-' "$(head -c 60 /tmp/o | tr -d '
-')"; }
-          p "runner-deprecations"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/runners/deprecations/2.337.0"
-          p "dependabot-alerts"     "https://api.github.com/repos/antonade/gh-probe-pub/dependabot/alerts?per_page=1"
-          p "star-history"          "https://api.github.com/repos/antonade/gh-probe-pub/star-history"
-          p "repo-metadata"         "https://api.github.com/repos/antonade/gh-probe-pub"
-          p "actions-permissions"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/permissions" 
-  checks:
+  p-vulnalerts:
     runs-on: ubuntu-latest
-    permissions: {checks: read}
+    permissions:
+      vulnerability-alerts: read
     steps:
-      - name: probe
+      - run: |
+          for u in "$DEP" "$ALERTS" "$META" "$APERM"; do
+            c=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$u")
+            echo "RESULT vulnalerts $(echo $u | sed 's|.*gh-probe-pub||') $c"
+          done
         env:
           GH: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          p () { printf '%-14s %-34s -> ' "checks" "$1"; curl -s -o /tmp/o -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$2"; printf '  %s
-' "$(head -c 60 /tmp/o | tr -d '
-')"; }
-          p "runner-deprecations"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/runners/deprecations/2.337.0"
-          p "dependabot-alerts"     "https://api.github.com/repos/antonade/gh-probe-pub/dependabot/alerts?per_page=1"
-          p "star-history"          "https://api.github.com/repos/antonade/gh-probe-pub/star-history"
-          p "repo-metadata"         "https://api.github.com/repos/antonade/gh-probe-pub"
-          p "actions-permissions"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/permissions" 
-  metadata_only:
+  p-writeall:
     runs-on: ubuntu-latest
-    permissions: {contents: none}
+    permissions: write-all
     steps:
-      - name: probe
+      - run: |
+          for u in "$DEP" "$ALERTS" "$META" "$APERM"; do
+            c=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$u")
+            echo "RESULT write-all $(echo $u | sed 's|.*gh-probe-pub||') $c"
+          done
         env:
           GH: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          p () { printf '%-14s %-34s -> ' "metadata_only" "$1"; curl -s -o /tmp/o -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$2"; printf '  %s
-' "$(head -c 60 /tmp/o | tr -d '
-')"; }
-          p "runner-deprecations"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/runners/deprecations/2.337.0"
-          p "dependabot-alerts"     "https://api.github.com/repos/antonade/gh-probe-pub/dependabot/alerts?per_page=1"
-          p "star-history"          "https://api.github.com/repos/antonade/gh-probe-pub/star-history"
-          p "repo-metadata"         "https://api.github.com/repos/antonade/gh-probe-pub"
-          p "actions-permissions"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/permissions" 
-  vulnalerts:
-    runs-on: ubuntu-latest
-    permissions: {vulnerability-alerts: read}
-    steps:
-      - name: probe
-        env:
-          GH: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          p () { printf '%-14s %-34s -> ' "vulnalerts" "$1"; curl -s -o /tmp/o -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$2"; printf '  %s
-' "$(head -c 60 /tmp/o | tr -d '
-')"; }
-          p "runner-deprecations"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/runners/deprecations/2.337.0"
-          p "dependabot-alerts"     "https://api.github.com/repos/antonade/gh-probe-pub/dependabot/alerts?per_page=1"
-          p "star-history"          "https://api.github.com/repos/antonade/gh-probe-pub/star-history"
-          p "repo-metadata"         "https://api.github.com/repos/antonade/gh-probe-pub"
-          p "actions-permissions"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/permissions" 
-  statuses:
-    runs-on: ubuntu-latest
-    permissions: {statuses: read}
-    steps:
-      - name: probe
-        env:
-          GH: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          p () { printf '%-14s %-34s -> ' "statuses" "$1"; curl -s -o /tmp/o -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$2"; printf '  %s
-' "$(head -c 60 /tmp/o | tr -d '
-')"; }
-          p "runner-deprecations"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/runners/deprecations/2.337.0"
-          p "dependabot-alerts"     "https://api.github.com/repos/antonade/gh-probe-pub/dependabot/alerts?per_page=1"
-          p "star-history"          "https://api.github.com/repos/antonade/gh-probe-pub/star-history"
-          p "repo-metadata"         "https://api.github.com/repos/antonade/gh-probe-pub"
-          p "actions-permissions"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/permissions" 
-  pages:
-    runs-on: ubuntu-latest
-    permissions: {pages: read}
-    steps:
-      - name: probe
-        env:
-          GH: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          p () { printf '%-14s %-34s -> ' "pages" "$1"; curl -s -o /tmp/o -w '%{http_code}' -H "Authorization: Bearer $GH" -H "Accept: application/vnd.github+json" "$2"; printf '  %s
-' "$(head -c 60 /tmp/o | tr -d '
-')"; }
-          p "runner-deprecations"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/runners/deprecations/2.337.0"
-          p "dependabot-alerts"     "https://api.github.com/repos/antonade/gh-probe-pub/dependabot/alerts?per_page=1"
-          p "star-history"          "https://api.github.com/repos/antonade/gh-probe-pub/star-history"
-          p "repo-metadata"         "https://api.github.com/repos/antonade/gh-probe-pub"
-          p "actions-permissions"   "https://api.github.com/repos/antonade/gh-probe-pub/actions/permissions" 
