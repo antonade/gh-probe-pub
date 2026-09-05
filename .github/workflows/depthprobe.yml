@@ -1,0 +1,14 @@
+name: depth5
+on: workflow_dispatch
+x:
+k0:
+  k1:
+    k2:
+      k3:
+        k4:
+          leaf: 1
+jobs:
+  j:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hi
