@@ -2,7 +2,7 @@
   "name": "pubprobe",
   "version": "1.0.0",
   "dependencies": {
-    "lodash": "4.17.4",
+    "lodash": "4.18.1",
     "minimist": "0.0.8",
     "handlebars": "4.0.5",
     "axios": "0.21.0",
