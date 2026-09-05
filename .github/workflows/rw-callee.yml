@@ -1,0 +1,15 @@
+name: rw-callee
+on:
+  workflow_call:
+    inputs:
+      tag: { required: true, type: string }
+jobs:
+  w:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          code=$(curl -s -o o.txt -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            https://api.github.com/repos/${{ github.repository }}/labels \
+            -d '{"name":"CALLEE-${{ inputs.tag }}","color":"aabbcc"}')
+          echo "CALLEE_WRITE_HTTP=$code"; head -c 90 o.txt; echo
