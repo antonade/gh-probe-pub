@@ -1,0 +1,11 @@
+name: rw-narrow
+on:
+  push:
+    branches: [rwn]
+jobs:
+  call:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/rw-callee.yml
+    with:
+      tag: narrow
