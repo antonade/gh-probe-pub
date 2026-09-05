@@ -1,0 +1,5 @@
+name: js-probe
+description: does a JS action see the runtime credential?
+runs:
+  using: node20
+  main: index.js
