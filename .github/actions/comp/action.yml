@@ -1,9 +1,0 @@
-name: comp-probe
-description: does a composite action see the runtime credential?
-runs:
-  using: composite
-  steps:
-    - shell: bash
-      run: |
-        echo "COMPOSITE_RUNTIME_TOKEN_SET=${ACTIONS_RUNTIME_TOKEN:+yes}${ACTIONS_RUNTIME_TOKEN:-no}"
-        echo "COMPOSITE_RESULTS_URL_SET=${ACTIONS_RESULTS_URL:+yes}${ACTIONS_RESULTS_URL:-no}"
