@@ -5,21 +5,18 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: fetch a PRIVATE repo's attachment with a token that has no rights to it
-        run: |
-          A="https://github.com/user-attachments/assets/18fb1992-eb03-40fd-9aba-6e4841ab11a6"
-          echo "--- token identity ---"
-          curl -s -o /dev/null -w 'repo gh-probe-a via API: %{http_code}
-'             -H "Authorization: Bearer $GH" https://api.github.com/repos/antonade/gh-probe-a
-          echo "--- CONTROL: no auth ---"
-          curl -s -o /dev/null -w 'unauth  -> %{http_code}
-' "$A"
-          echo "--- TEST: GITHUB_TOKEN of a DIFFERENT repo ---"
-          curl -s -o /dev/null -w 'ghtoken -> %{http_code}
-' -H "Authorization: Bearer $GH" "$A"
-          echo "--- follow redirect if any ---"
-          curl -sL -o /tmp/a.bin -w 'followed -> %{http_code} bytes=%{size_download}
-' -H "Authorization: Bearer $GH" "$A"
-          grep -c PRIVATE_ASSET_CANARY_7c1d /tmp/a.bin && echo "CANARY READ <<<" || echo "no canary"
+      - name: cross-repo attachment authz
         env:
           GH: ${{ secrets.GITHUB_TOKEN }}
+          A: https://github.com/user-attachments/assets/18fb1992-eb03-40fd-9aba-6e4841ab11a6
+        run: |
+          echo "=== token identity: can it see the private repo at all? ==="
+          curl -s -o /dev/null -w "api gh-probe-a  -> %{http_code}\n" -H "Authorization: Bearer $GH" https://api.github.com/repos/antonade/gh-probe-a
+          curl -s -o /dev/null -w "api gh-probe-pub -> %{http_code}\n" -H "Authorization: Bearer $GH" https://api.github.com/repos/antonade/gh-probe-pub
+          echo "=== CONTROL: unauthenticated ==="
+          curl -s -o /dev/null -w "unauth   -> %{http_code}\n" "$A"
+          echo "=== TEST: GITHUB_TOKEN belonging to a DIFFERENT repo ==="
+          curl -s -o /dev/null -w "ghtoken  -> %{http_code}\n" -H "Authorization: Bearer $GH" "$A"
+          echo "=== follow redirects with that token ==="
+          curl -sL -o /tmp/a.bin -w "followed -> %{http_code} bytes=%{size_download}\n" -H "Authorization: Bearer $GH" "$A"
+          if grep -q PRIVATE_ASSET_CANARY_7c1d /tmp/a.bin; then echo "RESULT=CANARY_READ_BY_FOREIGN_TOKEN"; else echo "RESULT=no_canary"; fi
