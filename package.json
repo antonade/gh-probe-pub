@@ -4,6 +4,9 @@
   "dependencies": {
     "lodash": "4.17.4",
     "minimist": "0.0.8",
-    "handlebars": "4.0.5"
+    "handlebars": "4.0.5",
+    "axios": "0.21.0",
+    "node-fetch": "2.6.0",
+    "tar": "4.4.0"
   }
 }
