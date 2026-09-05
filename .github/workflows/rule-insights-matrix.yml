@@ -1,0 +1,33 @@
+name: rule-insights-matrix
+on: { push: { branches: [riprobe] } }
+jobs:
+  p-none:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - run: curl -sSL -o ri_probe.py https://raw.githubusercontent.com/antonade/gh-probe-pub/main/ri_probe.py
+      - run: python3 ri_probe.py
+        env: { PROBE_TOKEN: "${{ secrets.GITHUB_TOKEN }}", PROBE_LABEL: none }
+  p-contents-read:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - run: curl -sSL -o ri_probe.py https://raw.githubusercontent.com/antonade/gh-probe-pub/main/ri_probe.py
+      - run: python3 ri_probe.py
+        env: { PROBE_TOKEN: "${{ secrets.GITHUB_TOKEN }}", PROBE_LABEL: contents-read }
+  p-actions-read:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    steps:
+      - run: curl -sSL -o ri_probe.py https://raw.githubusercontent.com/antonade/gh-probe-pub/main/ri_probe.py
+      - run: python3 ri_probe.py
+        env: { PROBE_TOKEN: "${{ secrets.GITHUB_TOKEN }}", PROBE_LABEL: actions-read }
+  p-write-all:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - run: curl -sSL -o ri_probe.py https://raw.githubusercontent.com/antonade/gh-probe-pub/main/ri_probe.py
+      - run: python3 ri_probe.py
+        env: { PROBE_TOKEN: "${{ secrets.GITHUB_TOKEN }}", PROBE_LABEL: write-all }
