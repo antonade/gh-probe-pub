@@ -1,0 +1,30 @@
+name: artifact-server
+on: workflow_dispatch
+jobs:
+  direct:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+
+            const tok = process.env.ACTIONS_RUNTIME_TOKEN;
+            const base = process.env.ACTIONS_RESULTS_URL;
+            core.info("RUNTIME_TOKEN present=" + (!!tok));
+            core.info("RESULTS_URL=" + base);
+            if (!tok) { core.info("NO RUNTIME TOKEN"); return; }
+            const claims = JSON.parse(Buffer.from(tok.split('.')[1], 'base64').toString());
+            core.info("SCP=" + JSON.stringify(claims.scp));
+            const m = (claims.scp||"").match(/Actions\.Results:([0-9a-f-]+):([0-9a-f-]+)/i);
+            if (!m) { core.info("no Actions.Results scope"); return; }
+            core.info("run_backend_id=" + m[1] + " job_backend_id=" + m[2]);
+            const names = ["legit-direct", "../escaped", "a/../../b", "nested/dir/x", "..", "x y", "con", "a:b", "dot%2e%2e%2fslash", "tab\ttab"];
+            for (const n of names) {
+              const body = JSON.stringify({workflow_run_backend_id: m[1],
+                workflow_job_run_backend_id: m[2], name: n, version: 4});
+              const r = await fetch(base + "twirp/github.actions.results.api.v1.ArtifactService/CreateArtifact",
+                {method:"POST", headers:{"Authorization":"Bearer "+tok,"Content-Type":"application/json"}, body});
+              const t = await r.text();
+              core.info("SRV name=" + JSON.stringify(n) + " http=" + r.status + " body=" + t.slice(0,110));
+              await new Promise(z => setTimeout(z, 400));
+            }
