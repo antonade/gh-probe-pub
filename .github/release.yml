@@ -1,0 +1,15 @@
+changelog:
+  exclude:
+    labels:
+      - ignore
+  categories:
+    - title: T
+      labels:
+        - '*'
+x:
+    k0:
+      k1:
+        k2:
+          k3:
+            k4:
+            leaf: 1
